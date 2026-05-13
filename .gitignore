@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
+
+# Docker logs
+*.log
+
+# Excel/Data files (ถ้าไม่อยากเก็บไฟล์ที่อัปโหลดไว้บน Git)
+# *.xlsx
+*.xls
+*.csv
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
