@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Report System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">YAM Reporter</a>
+            <a href="/report" class="btn btn-info text-white">ดูรายงานสรุป (Report)</a>
+        </div>
+    </nav>
+    <div class="container py-5">
+        <!-- ส่วนแสดง Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show"
+            role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="card-title">นำเข้าข้อมูล Excel</h2>
+                <form method="POST" enctype="multipart/form-data" class="row g-3">
+                    <div class="col-auto">
+                        <input type="file" name="file" class="form-control" accept=".xlsx, .xls" required>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">บันทึกและแสดงผล</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title mb-4 text-success">รายการที่นำเข้าสำเร็จในรอบนี้</h3>
+                <div class="table-responsive">
+                    <table class="table table-hover border">
+                        <thead class="table-success">
+                            <tr>
+                                <th>วันที่ตรวจ</th>
+                                <th>เวลาตรวจ</th>
+                                <th>รายละเอียดจุดตรวจ (ID)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in logs %}
+                            <tr>
+                                <td>{{ log.check_date }}</td>
+                                <td>{{ log.check_time }}</td>
+                                <td><span class="badge bg-primary fs-6">{{ log.description }}</span></td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-4">กรุณาเลือกไฟล์ Excel
+                                    เพื่อนำเข้าข้อมูลใหม่</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

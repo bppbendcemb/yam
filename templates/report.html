@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <title>รายงานการตรวจจุด - YAM Reporter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* เพิ่มเส้นหนาขึ้นเมื่อเริ่มวันใหม่ */
+        tr:has(td span.text-dark) {
+            border-top: 2px solid #dee2e6;
+        }
+    </style>
+
+    <style>
+        /* เส้นแบ่งกลุ่มวันให้ชัดเจน */
+        .day-separator {
+            border-top: 3px solid #0d6efd !important;
+        }
+
+        /* สีพื้นหลังช่องที่ไม่ได้ตรวจ (ค่าว่าง) */
+        .missing-check {
+            background-color: #ffebee !important;
+            /* สีแดงอ่อน */
+            color: #c62828;
+        }
+    </style>
+
+
+</head>
+
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">YAM Reporter</a>
+            <div class="d-flex">
+                <a href="/" class="btn btn-outline-light me-2">หน้านำเข้า</a>
+                <a href="/export{% if start_date or end_date %}?{% if start_date %}start_date={{ start_date }}{% endif %}{% if start_date and end_date %}&{% endif %}{% if end_date %}end_date={{ end_date }}{% endif %}{% endif %}"
+                    class="btn btn-success">📊 Export Excel</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-4">
+        <!-- ฟอร์มเลือกช่วงวันที่ -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <form action="/report" method="GET" class="row g-3 align-items-end">
+                    <div class="col-auto">
+                        <label class="form-label">ตั้งแต่วันที่</label>
+                        <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
+                    </div>
+                    <div class="col-auto">
+                        <label class="form-label">ถึงวันที่</label>
+                        <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">🔍 กรองข้อมูล</button>
+                        <a href="/report" class="btn btn-outline-secondary">ล้างค่า</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-body">
+                <table class="table table-bordered text-center align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>วันที่</th>
+                            <th>ชั่วโมง</th>
+                            {% for i in range(1, 8) %} <th>จุด {{ i }}</th> {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in reports %}
+                        {% set date_changed = loop.changed(r.check_date) %}
+                        <tr class="{{ 'day-separator' if date_changed and not loop.first }}">
+                            <td class="bg-white">
+                                {% if date_changed %}
+                                <span class="fw-bold">{{ r.check_date }}</span>
+                                {% endif %}
+                            </td>
+                 
+                            <td class="table-light fw-bold">{{ r.hour_group | int }}:00</td>
+
+                            {# ตรวจสอบแต่ละจุด ถ้าว่างให้ใส่ Class missing-check #}
+                            <td class="{{ 'missing-check' if not r.p1 }}">{{ r.p1 if r.p1 else 'No Data' }}</td>
+                            <td class="{{ 'missing-check' if not r.p2 }}">{{ r.p2 if r.p2 else 'No Data' }}</td>
+                            <td class="{{ 'missing-check' if not r.p3 }}">{{ r.p3 if r.p3 else 'No Data' }}</td>
+                            <td class="{{ 'missing-check' if not r.p4 }}">{{ r.p4 if r.p4 else 'No Data' }}</td>
+                            <td class="{{ 'missing-check' if not r.p5 }}">{{ r.p5 if r.p5 else 'No Data' }}</td>
+                            <td class="{{ 'missing-check' if not r.p6 }}">{{ r.p6 if r.p6 else 'No Data' }}</td>
+                            <td class="{{ 'missing-check' if not r.p7 }}">{{ r.p7 if r.p7 else 'No Data' }}</td>
+
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="10" class="text-center text-muted py-4">ไม่พบข้อมูลตามช่วงวันที่ที่เลือก</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

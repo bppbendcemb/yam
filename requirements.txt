@@ -1,0 +1,9 @@
+flask
+pandas
+openpyxl
+xlrd
+lxml
+html5lib
+psycopg2-binary
+flask-sqlalchemy
+python-dotenv

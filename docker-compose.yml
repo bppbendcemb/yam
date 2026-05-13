@@ -1,0 +1,17 @@
+services:
+  excel-report:
+    build: .
+    container_name: excel-import-service
+    ports:
+      - "5012:5000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    networks:
+      - pg_net
+
+networks:
+  pg_net:
+    external: true
+    name: postgresql_default
